@@ -4,14 +4,19 @@ import android.annotation.SuppressLint
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.afdhal_studio.distancetrakerapp.R
 import com.afdhal_studio.distancetrakerapp.databinding.FragmentMapsBinding
 import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.hide
 import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.show
+import com.afdhal_studio.distancetrakerapp.utils.Permissions
+import com.afdhal_studio.distancetrakerapp.utils.Permissions.hasBackgroundLocationPermission
+import com.afdhal_studio.distancetrakerapp.utils.Permissions.requestBackgroundLocationPermission
 import com.google.android.gms.location.LocationServices
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -20,10 +25,16 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.vmadalin.easypermissions.EasyPermissions
+import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
+class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, EasyPermissions.PermissionCallbacks {
+    companion object {
+        const val TAG = "MapsFragment"
+    }
+
     private var _binding: FragmentMapsBinding? = null
     private val binding get() = _binding!!
 
@@ -44,13 +55,21 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         mapFragment?.getMapAsync(this)
 
         binding.startButton.setOnClickListener {
-
+            onStartButtonClicked()
         }
         binding.stopButton.setOnClickListener {
 
         }
         binding.resetButton.setOnClickListener {
 
+        }
+    }
+
+    private fun onStartButtonClicked() {
+        if (hasBackgroundLocationPermission(requireContext())) {
+            Log.d(TAG,"Already Enable")
+        } else {
+            requestBackgroundLocationPermission(this)
         }
     }
 
@@ -67,6 +86,23 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             isCompassEnabled = false
             isScrollGesturesEnabled = false
         }
+    }
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms[0])) {
+            SettingsDialog.Builder(requireActivity()).build().show()
+        } else {
+            requestBackgroundLocationPermission(this)
+        }
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
+        onStartButtonClicked()
     }
 
     override fun onMyLocationButtonClick(): Boolean {
