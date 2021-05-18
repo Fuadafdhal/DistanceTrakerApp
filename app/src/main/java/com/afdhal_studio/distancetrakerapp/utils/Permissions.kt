@@ -4,8 +4,8 @@ import android.Manifest
 import android.content.Context
 import android.os.Build
 import androidx.fragment.app.Fragment
-import com.afdhal_studio.distancetrakerapp.utils.Utils.PERMISSION_BACKGROUND_LOCATION_REQUEST_CODE
-import com.afdhal_studio.distancetrakerapp.utils.Utils.PERMISSION_LOCATION_REQUEST_CODE
+import com.afdhal_studio.distancetrakerapp.utils.Constants.PERMISSION_BACKGROUND_LOCATION_REQUEST_CODE
+import com.afdhal_studio.distancetrakerapp.utils.Constants.PERMISSION_LOCATION_REQUEST_CODE
 import com.vmadalin.easypermissions.EasyPermissions
 
 /**

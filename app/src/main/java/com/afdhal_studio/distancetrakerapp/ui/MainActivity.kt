@@ -6,7 +6,9 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.afdhal_studio.distancetrakerapp.R
 import com.afdhal_studio.distancetrakerapp.utils.Permissions
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {

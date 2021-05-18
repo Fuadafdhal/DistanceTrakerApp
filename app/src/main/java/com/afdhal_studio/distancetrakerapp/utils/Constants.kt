@@ -4,7 +4,7 @@ package com.afdhal_studio.distancetrakerapp.utils
  *Created by Muh Fuad Afdhal on 18/05/2021
  */
 
-object Utils {
+object Constants {
     const val PERMISSION_LOCATION_REQUEST_CODE = 1
     const val PERMISSION_BACKGROUND_LOCATION_REQUEST_CODE = 2
 

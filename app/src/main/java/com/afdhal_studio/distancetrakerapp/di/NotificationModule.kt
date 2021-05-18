@@ -7,8 +7,8 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.afdhal_studio.distancetrakerapp.R
 import com.afdhal_studio.distancetrakerapp.ui.MainActivity
-import com.afdhal_studio.distancetrakerapp.utils.Utils
-import com.afdhal_studio.distancetrakerapp.utils.Utils.NOTIFICATION_CHANNEL_ID
+import com.afdhal_studio.distancetrakerapp.utils.Constants
+import com.afdhal_studio.distancetrakerapp.utils.Constants.NOTIFICATION_CHANNEL_ID
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,7 +31,7 @@ class NotificationModule {
     ): PendingIntent {
         return PendingIntent.getActivity(
             context,
-            Utils.PENDING_INTENT_REQUEST_CODE,
+            Constants.PENDING_INTENT_REQUEST_CODE,
             Intent(context, MainActivity::class.java),
             PendingIntent.FLAG_CANCEL_CURRENT
         )

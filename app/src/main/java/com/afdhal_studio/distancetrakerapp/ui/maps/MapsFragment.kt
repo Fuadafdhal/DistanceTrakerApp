@@ -6,36 +6,31 @@ import androidx.fragment.app.Fragment
 
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.afdhal_studio.distancetrakerapp.R
 import com.afdhal_studio.distancetrakerapp.databinding.FragmentMapsBinding
 import com.afdhal_studio.distancetrakerapp.service.TrackerService
 import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.disable
 import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.hide
 import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.show
-import com.afdhal_studio.distancetrakerapp.utils.Permissions
 import com.afdhal_studio.distancetrakerapp.utils.Permissions.hasBackgroundLocationPermission
 import com.afdhal_studio.distancetrakerapp.utils.Permissions.requestBackgroundLocationPermission
-import com.afdhal_studio.distancetrakerapp.utils.Utils.ACTION_SERVICE_START
-import com.google.android.gms.location.LocationServices
+import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_START
 
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, EasyPermissions.PermissionCallbacks {
     companion object {
         const val TAG = "MapsFragment"

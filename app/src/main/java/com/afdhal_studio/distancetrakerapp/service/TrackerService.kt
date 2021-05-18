@@ -7,10 +7,11 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
-import com.afdhal_studio.distancetrakerapp.utils.Utils.ACTION_SERVICE_START
-import com.afdhal_studio.distancetrakerapp.utils.Utils.ACTION_SERVICE_STOP
-import com.afdhal_studio.distancetrakerapp.utils.Utils.NOTIFICATION_CHANNEL_ID
-import com.afdhal_studio.distancetrakerapp.utils.Utils.NOTIFICATION_CHANNEL_NAME
+import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_START
+import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_STOP
+import com.afdhal_studio.distancetrakerapp.utils.Constants.NOTIFICATION_CHANNEL_ID
+import com.afdhal_studio.distancetrakerapp.utils.Constants.NOTIFICATION_CHANNEL_NAME
+import com.afdhal_studio.distancetrakerapp.utils.Constants.NOTIFICATION_ID
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -51,6 +52,7 @@ class TrackerService : LifecycleService() {
             when (it.action) {
                 ACTION_SERVICE_START -> {
                     started.postValue(true)
+                    startForegroundService()
                 }
                 ACTION_SERVICE_STOP -> {
                     started.postValue(false)
@@ -58,10 +60,15 @@ class TrackerService : LifecycleService() {
                 else -> {
                 }
             }
-
         }
         return super.onStartCommand(intent, flags, startId)
     }
+
+    private fun startForegroundService() {
+        createNotificationChannel()
+        startForeground(NOTIFICATION_ID, notification.build())
+    }
+
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
