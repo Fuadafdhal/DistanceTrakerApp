@@ -1,6 +1,7 @@
 package com.afdhal_studio.distancetrakerapp.ui.maps
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
@@ -14,12 +15,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.afdhal_studio.distancetrakerapp.R
 import com.afdhal_studio.distancetrakerapp.databinding.FragmentMapsBinding
+import com.afdhal_studio.distancetrakerapp.service.TrackerService
 import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.disable
 import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.hide
 import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.show
 import com.afdhal_studio.distancetrakerapp.utils.Permissions
 import com.afdhal_studio.distancetrakerapp.utils.Permissions.hasBackgroundLocationPermission
 import com.afdhal_studio.distancetrakerapp.utils.Permissions.requestBackgroundLocationPermission
+import com.afdhal_studio.distancetrakerapp.utils.Utils.ACTION_SERVICE_START
 import com.google.android.gms.location.LocationServices
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -95,11 +98,20 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             }
 
             override fun onFinish() {
+                sendActionCommandToService(ACTION_SERVICE_START)
                 binding.timerTextView.hide()
             }
         }
         timer.start()
     }
+
+    private fun sendActionCommandToService(action: String) {
+        Intent(requireContext(), TrackerService::class.java).apply {
+            this.action = action
+            requireContext().startService(this)
+        }
+    }
+
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
