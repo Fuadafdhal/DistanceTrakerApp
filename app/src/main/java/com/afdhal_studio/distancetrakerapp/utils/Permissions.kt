@@ -1,9 +1,9 @@
-package com.afdhal_studio.distancetrakerapp
+package com.afdhal_studio.distancetrakerapp.utils
 
 import android.Manifest
 import android.content.Context
 import androidx.fragment.app.Fragment
-import com.afdhal_studio.distancetrakerapp.Utils.PERMISSION_LOCATION_REQUEST_CODE
+import com.afdhal_studio.distancetrakerapp.utils.Utils.PERMISSION_LOCATION_REQUEST_CODE
 import com.vmadalin.easypermissions.EasyPermissions
 
 /**

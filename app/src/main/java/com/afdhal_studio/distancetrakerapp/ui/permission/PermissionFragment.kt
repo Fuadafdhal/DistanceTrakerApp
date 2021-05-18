@@ -1,14 +1,14 @@
-package com.afdhal_studio.distancetrakerapp
+package com.afdhal_studio.distancetrakerapp.ui.permission
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.afdhal_studio.distancetrakerapp.Permissions.hasLocationPermission
-import com.afdhal_studio.distancetrakerapp.Permissions.requestLocationPermission
+import com.afdhal_studio.distancetrakerapp.R
+import com.afdhal_studio.distancetrakerapp.utils.Permissions.hasLocationPermission
+import com.afdhal_studio.distancetrakerapp.utils.Permissions.requestLocationPermission
 import com.afdhal_studio.distancetrakerapp.databinding.FragmentPermissionBinding
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog

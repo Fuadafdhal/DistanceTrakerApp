@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/permissionFragment"
-        android:name="com.afdhal_studio.distancetrakerapp.PermissionFragment"
+        android:name="com.afdhal_studio.distancetrakerapp.ui.permission.PermissionFragment"
         android:label="fragment_permission"
         tools:layout="@layout/fragment_permission" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/mapsFragment"
-        android:name="com.afdhal_studio.distancetrakerapp.MapsFragment"
+        android:name="com.afdhal_studio.distancetrakerapp.ui.maps.MapsFragment"
         android:label="fragment_maps"
         tools:layout="@layout/fragment_maps" >
         <action
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/resultFragment"
-        android:name="com.afdhal_studio.distancetrakerapp.ResultFragment"
+        android:name="com.afdhal_studio.distancetrakerapp.ui.result.ResultFragment"
         android:label="fragment_result"
         tools:layout="@layout/fragment_result" >
         <action

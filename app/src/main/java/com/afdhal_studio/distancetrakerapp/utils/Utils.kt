@@ -1,4 +1,4 @@
-package com.afdhal_studio.distancetrakerapp
+package com.afdhal_studio.distancetrakerapp.utils
 
 /**
  *Created by Muh Fuad Afdhal on 18/05/2021

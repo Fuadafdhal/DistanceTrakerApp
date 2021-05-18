@@ -1,10 +1,11 @@
-package com.afdhal_studio.distancetrakerapp
+package com.afdhal_studio.distancetrakerapp.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
+import com.afdhal_studio.distancetrakerapp.R
+import com.afdhal_studio.distancetrakerapp.utils.Permissions
 
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
