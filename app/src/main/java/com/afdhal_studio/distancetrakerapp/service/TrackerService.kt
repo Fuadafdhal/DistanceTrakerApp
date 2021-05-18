@@ -1,17 +1,22 @@
 package com.afdhal_studio.distancetrakerapp.service
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
 import android.os.Build
+import android.os.Looper
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
+import com.afdhal_studio.distancetrakerapp.utils.Constants
 import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_START
 import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_STOP
 import com.afdhal_studio.distancetrakerapp.utils.Constants.NOTIFICATION_CHANNEL_ID
 import com.afdhal_studio.distancetrakerapp.utils.Constants.NOTIFICATION_CHANNEL_NAME
 import com.afdhal_studio.distancetrakerapp.utils.Constants.NOTIFICATION_ID
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -29,6 +34,8 @@ class TrackerService : LifecycleService() {
     @Inject
     lateinit var notificationManager: NotificationManager
 
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
     companion object {
         val started = MutableLiveData<Boolean>()
         val startTime = MutableLiveData<Long>()
@@ -41,9 +48,21 @@ class TrackerService : LifecycleService() {
         started.postValue(false)
     }
 
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult) {
+            super.onLocationResult(result)
+            result.locations.let { locations ->
+                for (location in locations) {
+                    val newLatLang = LatLng(location.latitude, location.longitude)
+                    Log.d("TagTrackerService", newLatLang.toString())
+                }
+            }
+        }
+    }
 
     override fun onCreate() {
         setInitialValues()
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         super.onCreate()
     }
 
@@ -53,6 +72,7 @@ class TrackerService : LifecycleService() {
                 ACTION_SERVICE_START -> {
                     started.postValue(true)
                     startForegroundService()
+                    startLocationUpdates()
                 }
                 ACTION_SERVICE_STOP -> {
                     started.postValue(false)
@@ -67,6 +87,21 @@ class TrackerService : LifecycleService() {
     private fun startForegroundService() {
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, notification.build())
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startLocationUpdates() {
+        val locationRequest = LocationRequest.create().apply {
+            interval = Constants.LOCATION_UPDATE_INTERVAL
+            fastestInterval = Constants.LOCATION_FASTEST_UPDATE_INTERVAL
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
     }
 
 
