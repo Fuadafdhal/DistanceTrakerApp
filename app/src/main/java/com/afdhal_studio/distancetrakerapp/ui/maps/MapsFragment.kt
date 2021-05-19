@@ -27,10 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.ButtCap
-import com.google.android.gms.maps.model.JointType
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -108,7 +105,19 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
                 followPolyline()
             }
         }
+
+        TrackerService.startTime.observe(viewLifecycleOwner) {
+            startTime = it
+        }
+
+        TrackerService.stopTime.observe(viewLifecycleOwner) {
+            stopTime = it
+            if (stopTime != 0L) {
+                showBiggerPicture()
+            }
+        }
     }
+
 
     private fun drawPolyline() {
         val polyline = map.addPolyline(
@@ -121,13 +130,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
                 addAll(locationList)
             }
         )
-        TrackerService.startTime.observe(viewLifecycleOwner) {
-            startTime = it
-        }
 
-        TrackerService.stopTime.observe(viewLifecycleOwner) {
-            stopTime = it
-        }
     }
 
     private fun followPolyline() {
@@ -194,6 +197,28 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         }
     }
 
+    private fun showBiggerPicture() {
+        val bounds = LatLngBounds.Builder()
+        for (location in locationList) {
+            bounds.include(location)
+        }
+        map.animateCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                bounds.build(), 100
+            ), 2000, null
+        )
+    }
+
+    override fun onMyLocationButtonClick(): Boolean {
+        binding.hintTextView.animate().alpha(0f).duration = 1500
+        lifecycleScope.launch {
+            delay(2500)
+            binding.hintTextView.hide()
+            binding.startButton.show()
+        }
+        return false
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
@@ -210,15 +235,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         onStartButtonClicked()
     }
 
-    override fun onMyLocationButtonClick(): Boolean {
-        binding.hintTextView.animate().alpha(0f).duration = 1500
-        lifecycleScope.launch {
-            delay(2500)
-            binding.hintTextView.hide()
-            binding.startButton.show()
-        }
-        return false
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
