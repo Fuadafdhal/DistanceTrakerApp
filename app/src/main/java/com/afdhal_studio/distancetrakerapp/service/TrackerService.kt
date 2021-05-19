@@ -91,8 +91,6 @@ class TrackerService : LifecycleService() {
                     started.postValue(false)
                     stopForegroundService()
                 }
-                else -> {
-                }
             }
         }
         return super.onStartCommand(intent, flags, startId)
