@@ -3,35 +3,34 @@ package com.afdhal_studio.distancetrakerapp.ui.maps
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
-import androidx.fragment.app.Fragment
-
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.MutableLiveData
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.afdhal_studio.distancetrakerapp.R
 import com.afdhal_studio.distancetrakerapp.databinding.FragmentMapsBinding
 import com.afdhal_studio.distancetrakerapp.service.TrackerService
 import com.afdhal_studio.distancetrakerapp.ui.maps.MapUtil.setCameraPosition
+import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_START
+import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_STOP
 import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.disable
+import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.enable
 import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.hide
 import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.show
 import com.afdhal_studio.distancetrakerapp.utils.Permissions.hasBackgroundLocationPermission
 import com.afdhal_studio.distancetrakerapp.utils.Permissions.requestBackgroundLocationPermission
-import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_START
-import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_STOP
-import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.enable
 import com.google.android.gms.maps.CameraUpdateFactory
-
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.ButtCap
+import com.google.android.gms.maps.model.JointType
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.PolylineOptions
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,8 +50,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
 
 //    val started = MutableLiveData(false)
 
-//    private var startTime = 0L
-//    private var stopTime = 0L
+    private var startTime = 0L
+    private var stopTime = 0L
 
     private var locationList = mutableListOf<LatLng>()
 //    private var polylineList = mutableListOf<Polyline>()
@@ -122,6 +121,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
                 addAll(locationList)
             }
         )
+        TrackerService.startTime.observe(viewLifecycleOwner) {
+            startTime = it
+        }
+
+        TrackerService.stopTime.observe(viewLifecycleOwner) {
+            stopTime = it
+        }
     }
 
     private fun followPolyline() {

@@ -48,6 +48,9 @@ class TrackerService : LifecycleService() {
 
     private fun setInitialValues() {
         started.postValue(false)
+        startTime.postValue(0L)
+        stopTime.postValue(0L)
+
         locationList.postValue(mutableListOf())
     }
 
@@ -113,6 +116,7 @@ class TrackerService : LifecycleService() {
             locationCallback,
             Looper.getMainLooper()
         )
+        startTime.postValue(System.currentTimeMillis())
     }
 
     private fun stopForegroundService() {
@@ -120,12 +124,12 @@ class TrackerService : LifecycleService() {
         (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(NOTIFICATION_ID)
         stopForeground(true)
         stopSelf()
+        stopTime.postValue(System.currentTimeMillis())
     }
 
     private fun removeLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
-
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
