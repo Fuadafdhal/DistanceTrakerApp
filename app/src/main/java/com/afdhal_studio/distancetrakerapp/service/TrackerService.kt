@@ -8,10 +8,10 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.Looper
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
+import com.afdhal_studio.distancetrakerapp.ui.maps.MapUtil.calculateTheDistance
 import com.afdhal_studio.distancetrakerapp.utils.Constants
 import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_START
 import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_STOP
@@ -60,6 +60,7 @@ class TrackerService : LifecycleService() {
             result.locations.let { locations ->
                 for (location in locations) {
                     updateLocationList(location)
+                    updateNotificationPeriodically()
                 }
             }
         }
@@ -127,6 +128,14 @@ class TrackerService : LifecycleService() {
 
     private fun removeLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+
+    private fun updateNotificationPeriodically() {
+        notification.apply {
+            setContentTitle("Distance Travelled")
+            setContentText(locationList.value?.let { calculateTheDistance(it) } + "km")
+        }
+        notificationManager.notify(NOTIFICATION_ID,notification.build())
     }
 
     private fun createNotificationChannel() {
