@@ -12,9 +12,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.afdhal_studio.distancetrakerapp.R
 import com.afdhal_studio.distancetrakerapp.databinding.FragmentMapsBinding
+import com.afdhal_studio.distancetrakerapp.model.Result
 import com.afdhal_studio.distancetrakerapp.service.TrackerService
+import com.afdhal_studio.distancetrakerapp.ui.maps.MapUtil.calculateElapsedTime
+import com.afdhal_studio.distancetrakerapp.ui.maps.MapUtil.calculateTheDistance
 import com.afdhal_studio.distancetrakerapp.ui.maps.MapUtil.setCameraPosition
 import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_START
 import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_STOP
@@ -121,13 +125,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             stopTime = it
             if (stopTime != 0L) {
                 showBiggerPicture()
+                displayResults()
             }
         }
     }
 
 
     private fun drawPolyline() {
-        val polyline = map.addPolyline(
+        map.addPolyline(
             PolylineOptions().apply {
                 width(10f)
                 color(Color.BLUE)
@@ -214,6 +219,25 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
                 bounds.build(), 100
             ), 2000, null
         )
+    }
+
+    private fun displayResults() {
+        val result = Result(
+            calculateTheDistance(locationList),
+            calculateElapsedTime(startTime, stopTime)
+        )
+        lifecycleScope.launch {
+            delay(2500)
+            val directions = MapsFragmentDirections.actionMapsFragmentToResultFragment(result)
+            findNavController().navigate(directions)
+            binding.startButton.apply {
+                hide()
+                enable()
+            }
+            binding.stopButton.hide()
+            binding.resetButton.show()
+        }
+
     }
 
     override fun onMyLocationButtonClick(): Boolean {

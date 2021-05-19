@@ -35,5 +35,8 @@
             app:destination="@id/mapsFragment"
             app:popUpTo="@id/mapsFragment"
             app:popUpToInclusive="true" />
+        <argument
+            android:name="result"
+            app:argType="com.afdhal_studio.distancetrakerapp.model.Result" />
     </dialog>
 </navigation>
