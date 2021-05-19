@@ -24,6 +24,8 @@ import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.show
 import com.afdhal_studio.distancetrakerapp.utils.Permissions.hasBackgroundLocationPermission
 import com.afdhal_studio.distancetrakerapp.utils.Permissions.requestBackgroundLocationPermission
 import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_START
+import com.afdhal_studio.distancetrakerapp.utils.Constants.ACTION_SERVICE_STOP
+import com.afdhal_studio.distancetrakerapp.utils.ExtensionFunctions.enable
 import com.google.android.gms.maps.CameraUpdateFactory
 
 import com.google.android.gms.maps.GoogleMap
@@ -74,54 +76,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
             onStartButtonClicked()
         }
         binding.stopButton.setOnClickListener {
-
+            onStopButtonClicked()
         }
         binding.resetButton.setOnClickListener {
 
         }
     }
-
-    private fun onStartButtonClicked() {
-        if (hasBackgroundLocationPermission(requireContext())) {
-            startCountDown()
-            binding.startButton.disable()
-            binding.startButton.hide()
-            binding.stopButton.show()
-        } else {
-            requestBackgroundLocationPermission(this)
-        }
-    }
-
-    private fun startCountDown() {
-        binding.timerTextView.show()
-        binding.stopButton.disable()
-        val timer: CountDownTimer = object : CountDownTimer(4000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                val currentSecond = millisUntilFinished / 1000
-                if (currentSecond.toString() == "0") {
-                    binding.timerTextView.text = getString(R.string.go)
-                    binding.timerTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                } else {
-                    binding.timerTextView.text = currentSecond.toString()
-                    binding.timerTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
-                }
-            }
-
-            override fun onFinish() {
-                sendActionCommandToService(ACTION_SERVICE_START)
-                binding.timerTextView.hide()
-            }
-        }
-        timer.start()
-    }
-
-    private fun sendActionCommandToService(action: String) {
-        Intent(requireContext(), TrackerService::class.java).apply {
-            this.action = action
-            requireContext().startService(this)
-        }
-    }
-
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
@@ -144,6 +104,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         TrackerService.locationList.observe(viewLifecycleOwner) {
             if (it != null) {
                 locationList = it
+                if (locationList.size > 1) binding.stopButton.enable()
                 drawPolyline()
                 followPolyline()
             }
@@ -174,6 +135,58 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButto
         }
     }
 
+    private fun onStartButtonClicked() {
+        if (hasBackgroundLocationPermission(requireContext())) {
+            startCountDown()
+            binding.startButton.disable()
+            binding.startButton.hide()
+            binding.stopButton.show()
+        } else {
+            requestBackgroundLocationPermission(this)
+        }
+    }
+
+    private fun onStopButtonClicked() {
+        stopForegroundService()
+        binding.stopButton.hide()
+        binding.startButton.show()
+    }
+
+    private fun startCountDown() {
+        binding.timerTextView.show()
+        binding.stopButton.disable()
+        val timer: CountDownTimer = object : CountDownTimer(4000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val currentSecond = millisUntilFinished / 1000
+                if (currentSecond.toString() == "0") {
+                    binding.timerTextView.text = getString(R.string.go)
+                    binding.timerTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                } else {
+                    binding.timerTextView.text = currentSecond.toString()
+                    binding.timerTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+                }
+            }
+
+            override fun onFinish() {
+                sendActionCommandToService(ACTION_SERVICE_START)
+                binding.timerTextView.hide()
+            }
+        }
+        timer.start()
+    }
+
+    private fun stopForegroundService() {
+        binding.startButton.disable()
+        sendActionCommandToService(ACTION_SERVICE_STOP)
+    }
+
+
+    private fun sendActionCommandToService(action: String) {
+        Intent(requireContext(), TrackerService::class.java).apply {
+            this.action = action
+            requireContext().startService(this)
+        }
+    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
