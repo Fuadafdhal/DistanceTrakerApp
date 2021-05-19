@@ -6,8 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.afdhal_studio.distancetrakerapp.R
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class ResultFragment : Fragment() {
+class ResultFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
