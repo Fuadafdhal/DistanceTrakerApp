@@ -5,6 +5,9 @@ package com.afdhal_studio.distancetrakerapp.utils
  */
 
 object Constants {
+    const val LOCATION_LNG_EXTRA = "LOCATION_LNG_EXTRA"
+    const val LOCATION_LAT_EXTRA = "LOCATION_LAT_EXTRA"
+
     const val PERMISSION_LOCATION_REQUEST_CODE = 1
     const val PERMISSION_BACKGROUND_LOCATION_REQUEST_CODE = 2
 

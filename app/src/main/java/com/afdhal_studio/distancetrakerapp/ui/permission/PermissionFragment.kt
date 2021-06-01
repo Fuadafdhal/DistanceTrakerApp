@@ -31,7 +31,7 @@ class PermissionFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
         binding.continueButton.setOnClickListener {
             if (hasLocationPermission(requireContext())) {
-                findNavController().navigate(R.id.action_permissionFragment_to_mapsFragment)
+                findNavController().navigate(R.id.action_permissionFragment_to_myLocationFragment)
             } else {
                 requestLocationPermission(this)
             }
